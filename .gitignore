@@ -1,0 +1,18 @@
+# Db Notebook Folder
+metastore_db/
+.ipynb_checkpoints/
+
+# Notebook's logs
+*.log
+
+# Dataset files
+*.csv
+
+# Python imports
+*.pyc
+
+# Archivo de configuracion local
+cfg.py
+
+# Carpeta Visualizaciones
+Visualizations/
