@@ -19,8 +19,9 @@ ___
 ###### Crovetto, Carlos
 ###### Penovi, Francisco
 ###### Pinto, Oscar
+
 <br>
-<br>
+
 > #### *Python Requirements (via pip)*
 > + Requests (para bajar set de datos)
 > + PyQuery (para bajar set de datos)
