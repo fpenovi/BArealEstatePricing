@@ -92,7 +92,8 @@ def generateBigCsv(directory, out_fname='output.csv') :
     generateMissingUniqueID(dfOutput)                       # Genero id's en HEXA para los registros que no tienen
     print "Removiendo ID's duplicados..."
     dfOutput.drop_duplicates(subset='id', inplace=True)     # Remuevo las filas con id's repetidos (que quedaron de la primera pasada)
-
+    print "Realizando formateado final..."
+    dfOutput = doFinalFormatting(dfOutput)
     print "Procesamiento finalizado OK"
     print "Guardando", out_fname + "..."
     file_out = out_dir + '/' + out_fname
@@ -167,6 +168,19 @@ def loadDataFrame(directory, start_date) :
         raise TypeError("ERROR: En archivo " + directory.split('/')[-1], e)
 
 
+''' Corrige campos y los devuelve en un orden conveniente.'''
+def doFinalFormatting(df) :
+    df.dropna(subset=['price_aprox_usd'], inplace=True)
+    df = fillPlaceNames(df)
+    df = fixDoubles(df)
+    return df[['id', 'created_on', 'property_type',
+               'place_name', 'state_name', 'lat', 'lon',
+               'price', 'currency', 'price_aprox_local_currency',
+               'price_aprox_usd', 'surface_total_in_m2',
+               'surface_covered_in_m2', 'price_usd_per_m2',
+               'price_per_m2', 'floor', 'rooms', 'expenses']]
+
+
 ''' Genera un ID en hexadecimal de 40 digitos para los registros del
     DataFrame que no tengan uno.
     - INPUT: DataFrame con columna 'id'.
@@ -176,6 +190,10 @@ def generateMissingUniqueID(dataframe) :
     dataframe.loc[:, 'id'] = dataframe.apply(_makeID, args=(usableIDs,), axis=1)
 
 
+''' Genera ID's hexadecimales de longitud 40 que no se encuentran
+    utilizados en el DataFrame.
+    - INPUT: DataFrame con ids.
+    - OUTPUT: Set de ids utilizables. '''
 def makeUsableIDs(dataframe) :
     toMake = len(dataframe.id)
     usedIDs = set(dataframe.id.dropna())
@@ -190,8 +208,44 @@ def makeUsableIDs(dataframe) :
     return keys
 
 
+''' Asigna un ID unico para una fila.
+    - INPUT: Fila y Set de ID's.
+    - OUTPUT: ID de fila. '''
 def _makeID(row, usableIDs) :
     if not pd.isnull(row.id) :
         return row.id
 
     return usableIDs.pop()
+
+
+''' Relleno los campos de place_name.
+    INPUT: DataFrame con esa columna.
+    OUTPUT: DataFrame modificado. '''
+def fillPlaceNames(df) :
+    if df.place_name.isnull().sum() == 0 :
+        return df
+
+    df = df.reset_index(drop='index')
+    dfapply = df.loc[df.place_name.isnull()].loc[:,('place_name', 'place_with_parent_names')]
+    dfapply.loc[:,'place_name'] = dfapply.apply(lambda row: row.place_name if not pd.isnull(row.place_name) else row.place_with_parent_names.strip('|').split('|')[-1], axis=1)
+    df.update(dfapply.loc[:,('place_name')], overwrite=True)
+    return df
+
+
+''' Arregla los valores de las expensas.'''
+def fixDoubles(df) :
+    df = df.reset_index(drop='index')
+    dfapply = df.loc[~df.expenses.isnull(), ('id', 'expenses')]
+    dfapply.expenses = dfapply.apply(_fixDoubles, axis=1)
+    dfapply = dfapply.loc[(pd.to_numeric(dfapply.expenses) >= 100) & (pd.to_numeric(dfapply.expenses) <= 15000)]
+    dfapply.expenses = pd.to_numeric(dfapply.expenses)
+    df.expenses = pd.Series([np.NaN for i in xrange(len(df))])
+    df.update(dfapply.loc[:,('expenses')], overwrite=True)
+    return df
+
+
+def _fixDoubles(row) :
+    str_ = str(row.expenses)
+    str_ = filter( lambda c: c.isdigit() or c == '.', str_.replace(",", ".") )
+    points = str_.count('.')
+    return str_.replace('.', '', points - 1) if points > 1 else str_
