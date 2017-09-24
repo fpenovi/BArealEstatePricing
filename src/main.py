@@ -17,6 +17,6 @@ def downloadData() :
 
 def main() :
     downloadData()
-    chk.generateBigCsv(chk.DATADIR)
+    chk.generateBigCsv(chk.DATADIR, 'output_2.csv')
 
 main()

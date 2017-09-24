@@ -173,6 +173,7 @@ def doFinalFormatting(df) :
     df.dropna(subset=['price_aprox_usd'], inplace=True)
     df = fillPlaceNames(df)
     df = fixDoubles(df)
+    df.expenses = df.apply(_makeExpenses, axis=1)
     return df[['id', 'created_on', 'property_type',
                'place_name', 'state_name', 'lat', 'lon',
                'price', 'currency', 'price_aprox_local_currency',
@@ -249,3 +250,9 @@ def _fixDoubles(row) :
     str_ = filter( lambda c: c.isdigit() or c == '.', str_.replace(",", ".") )
     points = str_.count('.')
     return str_.replace('.', '', points - 1) if points > 1 else str_
+
+
+def _makeExpenses(row) :
+    if (row.property_type in ('house', 'store', 'PH') and pd.isnull(row.expenses)) :
+        return 0
+    return row.expenses
