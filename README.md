@@ -9,16 +9,14 @@
 
 ___
 + [Informe TP1](https://docs.google.com/document/d/1-1VYZItsWMwpkfpuQdgLBDwoBWiMRaTdPiu01bAYOmM/edit?usp=sharing "Análisis Exploratorio")
-+ [Kernel TP1](https://www.falta-agregar.com "Notebook Análisis Exploratorio")
++ [Kernel TP1](https://github.com/fpenovi/BArealEstatePricing/blob/master/notebooks/00%20-%20Hello_TP.ipynb "Notebook Análisis Exploratorio")
 + [Informe TP2](https://docs.google.com/document/d/19Rs8SzdZ3O7Q2dRUgmIxvfE0gCrDb9f-HIBK_Js5rQc/edit?usp=sharing "Machine Learning")
 ___
 
 + [Team Kaggle](https://www.falta-agregar.com "Team A definir")
 
 ### Integrantes:
-###### Crovetto, Carlos
 ###### Penovi, Francisco
-###### Pinto, Oscar
 
 <br>
 
