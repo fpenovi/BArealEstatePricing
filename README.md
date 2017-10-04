@@ -1,5 +1,5 @@
 # Organización De Datos 2017-2
-### Team &lt;insert_name_here&gt;
+### Team &lt; insert_name_here &gt;
 <br>
 
 + [Enunciado TP1](https://docs.google.com/document/d/1XQ0WWPhBURmd5r1Ld2khMsSJymPKYoZd_FUvLHqhkWA/edit "Entrega 25/09")
