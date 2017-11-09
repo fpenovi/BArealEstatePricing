@@ -1,20 +1,13 @@
 # Organización De Datos 2017-2
 
-<div style="
-    background-color: #5E2750;
-    min-height: 10em;
-    width: 82%;
-    font-family: Ubuntu Mono;
-    "><span style="
-    color: #5af101;
-    font-weight: bold;
-">orgdatos@2017-2</span><span style="
-    color: #dfe6e0;
-    font-weight: normal;
-    ">:</span><span style="
-    color: #5fabe8;
-    font-weight: bold;
-">~/BArealEstatePricing</span><span style="color: #dfe6e0;font-weight: normal;">$ sudo :(){ :|: &amp; };:</span></div>
+<html>
+    <div style="background-color: #5E2750; min-height: 10em; width: 82%; font-family: Ubuntu Mono;">
+        <span style="color: #5af101; font-weight: bold;">orgdatos@2017-2</span>
+        <span style="color: #dfe6e0; font-weight: normal;">:</span>
+        <span style="color: #5fabe8; font-weight: bold;">~/BArealEstatePricing</span>
+        <span style="color: #dfe6e0;font-weight: normal;">$ sudo :(){ :|: &amp; };:</span>
+    </div>
+</html>
 
 <br>
 
