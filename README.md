@@ -1,15 +1,7 @@
 # Organización De Datos 2017-2
 
-<html>
-    <div style="background-color: #5E2750; min-height: 10em; width: 82%; font-family: Ubuntu Mono;">
-        <span style="color: #5af101; font-weight: bold;">orgdatos@2017-2</span>
-        <span style="color: #dfe6e0; font-weight: normal;">:</span>
-        <span style="color: #5fabe8; font-weight: bold;">~/BArealEstatePricing</span>
-        <span style="color: #dfe6e0;font-weight: normal;">$ sudo :(){ :|: &amp; };:</span>
-    </div>
-</html>
+<img src="header.png"></img>
 
-<br>
 
 + [Enunciado TP1](https://docs.google.com/document/d/1XQ0WWPhBURmd5r1Ld2khMsSJymPKYoZd_FUvLHqhkWA/edit "Entrega 25/09")
 + [Enunciado TP2](https://docs.google.com/document/d/1YjoAhQ6mtBps9aauOvNzTMTpFv6I6_I2Y-2xsWDwSrU/edit "Entrega 27/11")
