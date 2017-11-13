@@ -16,3 +16,6 @@ cfg.py
 
 # Carpeta Visualizaciones
 Visualizations/
+
+# API keys
+*.key
