@@ -62,13 +62,31 @@ GOOGLE_API = load_gmaps_API_key()
 client = gmaps.Client(GOOGLE_API)
 
 queries = {
-            'SUBTES' : [ 'subte a',
-                         'subte b',
-                         'subte c',
-                         'subte d',
-                         'subte e',
-                         'subte h',
-                         'subte p' ] }
+            'SUBTES' : [ 'subte A',
+                         'subte B',
+                         'subte C',
+                         'subte D',
+                         'subte E',
+                         'subte H',
+                         'subte P' ],
+
+             'SHOPPINGS' : [ 'shopping',
+                             'centro comercial' ],
+
+             'METROBUS' : [ 'metrobus',
+                            'metrobus 9 julio',
+                            'metrobus santa fe',
+                            'metrobus bajo',
+                            'metrobus norte' ],
+
+             'TRENES' : [ 'estaciones tren',
+                          'estaciones tren mitre',
+                          'estaciones tren belgrano',
+                          'estaciones tren sarmiento',
+                          'estaciones tren san martin',
+                          'estaciones "tren de la costa"' ],
+
+              'PARQUES' : [ 'parks' ] }
 
 CABA_centroid = '-34.596952,-58.454212'
 result = set()
@@ -81,4 +99,6 @@ for topic, _queries in queries.items() :
         result = result.union(batch_result)
 
 print "Cantidad de resultados recuperados:", len(result), "\n"
-print pd.DataFrame(data=[reg for reg in result], columns=['place_id', 'lat', 'lon', 'name', 'topic'])
+data = pd.DataFrame(data=[reg for reg in result], columns=['place_id', 'lat', 'lon', 'name', 'topic'])
+print data.loc[data.topic.str.contains('PARQUES')]
+print len(data.loc[data.topic.str.contains('PARQUES')])
