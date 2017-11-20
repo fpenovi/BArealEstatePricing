@@ -29,7 +29,7 @@ start = time.time()     # Arranco a contar el tiempo
 
 print "Cargando dataset..."
 dfTrain = pd.read_csv('../../data/TRAIN_TEST_corrected2/train_corrected2.csv')
-train = dfTrain.drop(columns=['price_usd', 'id'], axis=1)
+train = dfTrain.drop(['price_usd', 'id'], axis=1)
 target = dfTrain.price_usd
 
 
