@@ -100,5 +100,3 @@ for topic, _queries in queries.items() :
 
 print "Cantidad de resultados recuperados:", len(result), "\n"
 data = pd.DataFrame(data=[reg for reg in result], columns=['place_id', 'lat', 'lon', 'name', 'topic'])
-print data.loc[data.topic.str.contains('PARQUES')]
-print len(data.loc[data.topic.str.contains('PARQUES')])
