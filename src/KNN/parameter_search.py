@@ -7,14 +7,23 @@
 #file_dir = os.path.dirname(os.path.realpath(__file__))          #
 #sys.path.insert(0, os.path.abspath(os.path.dirname(file_dir)))  #
 #################################################################
+import sys
 import time
 import pandas as pd
 import numpy as np
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import Normalizer
 from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KNeighborsRegressor
 from matplotlib import pyplot as plt
 
 # http://scikit-learn.org/stable/auto_examples/model_selection/plot_multi_metric_evaluation.html#sphx-glr-auto-examples-model-selection-plot-multi-metric-evaluation-py (BEST)
+
+
+scaler =  None if len(sys.argv) < 2 else sys.argv[1].lower()
+
+if scaler not in ('minmax', 'norm') :
+    raise ValueError('El parametro scaler debe ser "minmax" o "norm"')
 
 start = time.time()     # Arranco a contar el tiempo
 
@@ -22,6 +31,19 @@ print "Cargando dataset..."
 dfTrain = pd.read_csv('../../data/TRAIN_TEST_corrected2/train_corrected2.csv')
 train = dfTrain.drop(columns=['price_usd', 'id'], axis=1)
 target = dfTrain.price_usd
+
+
+# NORMALIZACION DEL DATASET:
+if scaler is not None :
+
+    if scaler == 'minmax' :
+        scaler = MinMaxScaler(feature_range=(0, 100))
+
+    elif scaler == 'norm' :
+        scaler = Normalizer().fit(train)
+
+    train = pd.DataFrame(scaler.transform(train), columns=train.columns)
+
 
 # PARAMETROS PARA KNN
 # Aca estoy definiendo 1 sola grilla
