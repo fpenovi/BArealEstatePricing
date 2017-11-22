@@ -16,15 +16,25 @@ from matplotlib import pyplot as plt
 start = time.time()
 
 print "Cargando dataset..."
-dfTrain = pd.read_csv('../../data/TRAIN_TEST_corrected2/train_corrected2.csv').sample(frac=0.01)
+dfTrain = pd.read_csv('../../data/TRAIN_TEST_corrected2/train_corrected2.csv')
 train = dfTrain.drop(['price_usd', 'id'], axis=1)
+train.reset_index(drop=True, inplace=True)
+
+print "Generando DataFrame con timestamps..."
+datestr_series = train.year_created.astype(np.int64).astype(np.str) + '/' + train.month_created.astype(np.int64).astype(np.str) + '/' + train.day_created.astype(np.int64).astype(np.str)
+datetime64_series = pd.to_datetime(datestr_series, format='%Y/%m/%d')
+timestamp_series = ((datetime64_series - np.datetime64('1970-01-01T00:00:00Z')) / np.timedelta64(1, 's'))
+trainTS = pd.DataFrame(train).drop(['year_created', 'month_created', 'day_created'], axis=1)
+trainTS.insert(loc=0, column='timestamp', value=timestamp_series)
+
 train = pd.DataFrame(StandardScaler().fit_transform(train), columns=train.columns)
 target = dfTrain.price_usd
 
 dfs = { 'YYYY-MM-DD' : train,
         'YYYY-MM' : train.drop(['day_created'], axis=1),
         'YYYY' : train.drop(['day_created', 'month_created'], axis=1),
-        'Undated' : train.drop(['day_created', 'month_created', 'year_created'], axis=1) }
+        'Undated' : train.drop(['day_created', 'month_created', 'year_created'], axis=1),
+        'Timestamp' : pd.DataFrame(StandardScaler().fit_transform(trainTS)) }
 
 param_grid = [ { 'n_neighbors' : [5, 10, 15, 20, 25, 30, 40, 50, 75, 100, 125, 150, 175, 200, 300, 400, 500],
                  'weights' : ['distance'],
