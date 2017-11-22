@@ -37,7 +37,7 @@ target = dfTrain.price_usd
 if scaler is not None :
 
     if scaler == 'minmax' :
-        scaler = MinMaxScaler(feature_range=(0, 100))
+        scaler = MinMaxScaler(feature_range=(0, 100)).fit(train)
 
     elif scaler == 'norm' :
         scaler = Normalizer().fit(train)
