@@ -16,7 +16,7 @@ from matplotlib import pyplot as plt
 start = time.time()
 
 print "Cargando dataset..."
-dfTrain = pd.read_csv('../../data/TRAIN_TEST_corrected2/train_corrected2.csv').sample(frac=0.5)
+dfTrain = pd.read_csv('../../data/TRAIN_TEST_corrected2/train_corrected2.csv')
 dfTrain.reset_index(drop=True, inplace=True)
 
 train = dfTrain.drop(['price_usd', 'id'], axis=1)
@@ -29,23 +29,23 @@ timestamp_series = ((datetime64_series - np.datetime64('1970-01-01T00:00:00Z')) 
 trainTS = pd.DataFrame(train).drop(['year_created', 'month_created', 'day_created'], axis=1)
 trainTS.insert(loc=0, column='timestamp', value=timestamp_series)
 
-dfYYYYMMDD = pd.DataFrame(StandardScaler().fit_transform(train), columns=train.columns)
+dfYYYYMMDD = pd.DataFrame(train)
 
 dfYYYYMM = train.drop(['day_created'], axis=1)
-dfYYYYMM = pd.DataFrame(StandardScaler().fit_transform(dfYYYYMM), columns=dfYYYYMM.columns)
+dfYYYYMM = pd.DataFrame(dfYYYYMM)
 
 dfYYYY = train.drop(['day_created', 'month_created'], axis=1)
-dfYYYY = pd.DataFrame(StandardScaler().fit_transform(dfYYYY), columns=dfYYYY.columns)
+dfYYYY = pd.DataFrame(dfYYYY)
 
 dfUndated = train.drop(['day_created', 'month_created', 'year_created'], axis=1)
-dfUndated = pd.DataFrame(StandardScaler().fit_transform(dfUndated), columns=dfUndated.columns)
+dfUndated = pd.DataFrame(dfUndated)
 
 
 dfs = { 'YYYY-MM-DD' : dfYYYYMMDD,
         'YYYY-MM' : dfYYYYMM,
         'YYYY' : dfYYYY,
         'Undated' : dfUndated,
-        'Timestamp' : pd.DataFrame(StandardScaler().fit_transform(trainTS), columns=trainTS.columns) }
+        'Timestamp' : pd.DataFrame(trainTS) }
 
 param_grid = [ { 'n_neighbors' : [20, 30, 40, 60, 80, 100, 120, 150, 200],
                  'weights' : ['distance'],
@@ -58,7 +58,7 @@ all_gs = {}
 for date_format, df_train in dfs.items() :
     print "Realizando GridSearch para", date_format
     knn = KNeighborsRegressor(n_jobs=-1)
-    gs = GridSearchCV(knn, scoring=scoring, param_grid=param_grid, cv=5, refit='MSE', return_train_score=False)
+    gs = GridSearchCV(knn, scoring=scoring, param_grid=param_grid, cv=10, refit='MSE', return_train_score=False)
     gs.fit(df_train, target)
     results_ = gs.cv_results_
     all_gs[date_format] = gs
