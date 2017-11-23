@@ -16,9 +16,11 @@ from matplotlib import pyplot as plt
 start = time.time()
 
 print "Cargando dataset..."
-dfTrain = pd.read_csv('../../data/TRAIN_TEST_corrected2/train_corrected2.csv')
+dfTrain = pd.read_csv('../../data/TRAIN_TEST_corrected2/train_corrected2.csv').sample(frac=0.5)
+dfTrain.reset_index(drop=True, inplace=True)
+
 train = dfTrain.drop(['price_usd', 'id'], axis=1)
-train.reset_index(drop=True, inplace=True)
+target = dfTrain.price_usd
 
 print "Generando DataFrame con timestamps..."
 datestr_series = train.year_created.astype(np.int64).astype(np.str) + '/' + train.month_created.astype(np.int64).astype(np.str) + '/' + train.day_created.astype(np.int64).astype(np.str)
@@ -27,16 +29,25 @@ timestamp_series = ((datetime64_series - np.datetime64('1970-01-01T00:00:00Z')) 
 trainTS = pd.DataFrame(train).drop(['year_created', 'month_created', 'day_created'], axis=1)
 trainTS.insert(loc=0, column='timestamp', value=timestamp_series)
 
-train = pd.DataFrame(StandardScaler().fit_transform(train), columns=train.columns)
-target = dfTrain.price_usd
+dfYYYYMMDD = pd.DataFrame(StandardScaler().fit_transform(train), columns=train.columns)
 
-dfs = { 'YYYY-MM-DD' : train,
-        'YYYY-MM' : train.drop(['day_created'], axis=1),
-        'YYYY' : train.drop(['day_created', 'month_created'], axis=1),
-        'Undated' : train.drop(['day_created', 'month_created', 'year_created'], axis=1),
-        'Timestamp' : pd.DataFrame(StandardScaler().fit_transform(trainTS)) }
+dfYYYYMM = train.drop(['day_created'], axis=1)
+dfYYYYMM = pd.DataFrame(StandardScaler().fit_transform(dfYYYYMM), columns=dfYYYYMM.columns)
 
-param_grid = [ { 'n_neighbors' : [5, 10, 15, 20, 25, 30, 40, 50, 75, 100, 125, 150, 175, 200, 300, 400, 500],
+dfYYYY = train.drop(['day_created', 'month_created'], axis=1)
+dfYYYY = pd.DataFrame(StandardScaler().fit_transform(dfYYYY), columns=dfYYYY.columns)
+
+dfUndated = train.drop(['day_created', 'month_created', 'year_created'], axis=1)
+dfUndated = pd.DataFrame(StandardScaler().fit_transform(dfUndated), columns=dfUndated.columns)
+
+
+dfs = { 'YYYY-MM-DD' : dfYYYYMMDD,
+        'YYYY-MM' : dfYYYYMM,
+        'YYYY' : dfYYYY,
+        'Undated' : dfUndated,
+        'Timestamp' : pd.DataFrame(StandardScaler().fit_transform(trainTS), columns=trainTS.columns) }
+
+param_grid = [ { 'n_neighbors' : [20, 30, 40, 60, 80, 100, 120, 150, 200],
                  'weights' : ['distance'],
                  'metric' : ['manhattan'] } ]
 
@@ -47,7 +58,7 @@ all_gs = {}
 for date_format, df_train in dfs.items() :
     print "Realizando GridSearch para", date_format
     knn = KNeighborsRegressor(n_jobs=-1)
-    gs = GridSearchCV(knn, scoring=scoring, param_grid=param_grid, cv=10, refit='MSE', return_train_score=False)
+    gs = GridSearchCV(knn, scoring=scoring, param_grid=param_grid, cv=5, refit='MSE', return_train_score=False)
     gs.fit(df_train, target)
     results_ = gs.cv_results_
     all_gs[date_format] = gs
@@ -68,7 +79,7 @@ ax.set_ylabel('NegMSE\n(higher is better)', fontsize=14)
 ax.legend(fontsize=11)
 
 neighbors = param_grid[0]['n_neighbors']
-step = 15
+step = 10
 ax.set_xticks(np.arange(min(neighbors), max(neighbors) + step, step));
 ax.tick_params(axis = 'x', labelsize = 9)
 

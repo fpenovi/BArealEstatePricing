@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import time
 import pandas as pd
 import numpy as np
 import googlemaps as gmaps
@@ -58,6 +59,8 @@ def _queryNextPage(token) :
     return result
 
 
+start = time.time()
+
 GOOGLE_API = load_gmaps_API_key()
 client = gmaps.Client(GOOGLE_API)
 
@@ -86,17 +89,35 @@ queries = {
                           'estaciones tren san martin',
                           'estaciones "tren de la costa"' ],
 
-              'PARQUES' : [ 'parks' ] }
+              'PARQUES' : [ 'parks',
+                            'parques',
+                            'espacios verdes' ],
+
+              'TURISMO' : [ 'lugares de interés turístico' ],
+
+              'SEGURIDAD' : [ 'comisaria' ] }
 
 CABA_centroid = '-34.596952,-58.454212'
+NORTE_centroid = '-34.519765,-58.562072'
+SUR_centroid = '-34.679331,-58.376179'
+OESTE_centroid = '-34.666566,-58.602421'
+
+centroids = [CABA_centroid, NORTE_centroid, SUR_centroid, OESTE_centroid]
 result = set()
 
 for topic, _queries in queries.items() :
     print "Realizando queries de", topic, "..."
 
-    for query in _queries :
-        batch_result = doFullQuery(client, query, CABA_centroid, topic)
-        result = result.union(batch_result)
+    for centroid in centroids :
+
+        for query in _queries :
+            batch_result = doFullQuery(client, query, centroid, topic)
+            result = result.union(batch_result)
+
+end = time.time()
+m, s = divmod(end - start, 60)
+h, m = divmod(m, 60)
+print 'Tiempo:', "%02d:%02d:%02d" % (h, m, s)
 
 print "Cantidad de resultados recuperados:", len(result), "\n"
 data = pd.DataFrame(data=[reg for reg in result], columns=['place_id', 'lat', 'lon', 'name', 'topic'])
