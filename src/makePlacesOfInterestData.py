@@ -18,7 +18,7 @@ def load_gmaps_API_key() :
 
 def doFullQuery(client, query, location, topic) :
     end_result = set()
-    result = client.places(query, location=location)
+    result = client.places(query, location=location[1])
 
     if result['status'] != 'OK' :
         raise LookupError("No se encontraron resultados para " + query)
@@ -31,7 +31,7 @@ def doFullQuery(client, query, location, topic) :
             lat = _result['geometry']['location']['lat']
             lon = _result['geometry']['location']['lng']
             name = _result['name']
-            end_result.add( (place_id, lat, lon, name, topic) )
+            end_result.add( (place_id, lat, lon, name, topic, location[0]) )
 
         if not 'next_page_token' in result :
             break
@@ -102,7 +102,8 @@ NORTE_centroid = '-34.519765,-58.562072'
 SUR_centroid = '-34.679331,-58.376179'
 OESTE_centroid = '-34.666566,-58.602421'
 
-centroids = [CABA_centroid, NORTE_centroid, SUR_centroid, OESTE_centroid]
+centroids = [ ('CABA', CABA_centroid), ('NORTE', NORTE_centroid),
+              ('SUR', SUR_centroid), ('OESTE', OESTE_centroid) ]
 result = set()
 
 for topic, _queries in queries.items() :
@@ -120,4 +121,5 @@ h, m = divmod(m, 60)
 print 'Tiempo:', "%02d:%02d:%02d" % (h, m, s)
 
 print "Cantidad de resultados recuperados:", len(result), "\n"
-data = pd.DataFrame(data=[reg for reg in result], columns=['place_id', 'lat', 'lon', 'name', 'topic'])
+data = pd.DataFrame(data=[reg for reg in result], columns=['place_id', 'lat', 'lon', 'name', 'topic', 'centroid'])
+data.to_csv('../data/externalData/placesOfInterest.csv', index=False, encoding='utf-8')
