@@ -16,8 +16,9 @@ from matplotlib import pyplot as plt
 start = time.time()
 
 print "Cargando dataset..."
-dfTrain = pd.read_csv('../../data/TRAIN_TEST_corrected2/train_corrected2.csv')
-train = dfTrain.drop(['price_usd', 'id'], axis=1)
+dfTrain = pd.read_csv('../../data/TRAIN_TEST_corrected3/train_corrected3.csv').sample(frac=0.30)
+dfTrain.reset_index(drop=True, inplace=True)
+train = dfTrain.drop(['price_usd', 'id', 'day_created', 'month_created', 'year_created'], axis=1)
 target = dfTrain.price_usd
 
 dfs = { 'No Scaling' : train }
@@ -29,7 +30,7 @@ for scaler_name, scaler_obj in scalers.items() :
     dfs[scaler_name] = pd.DataFrame(scaler_obj.transform(train), columns=train.columns)
 
 
-param_grid = [ { 'n_neighbors' : [5, 10, 15, 20, 25, 30, 40, 50, 75, 100, 125, 150, 175, 200, 300, 400, 500],
+param_grid = [ { 'n_neighbors' : [10, 20, 40, 80, 160, 200],
                  'weights' : ['distance'],
                  'metric' : ['manhattan'] } ]
 
@@ -41,7 +42,7 @@ all_gs = {}
 for scaling_name, df_train in dfs.items() :
     print "Realizando GridSearch para", scaling_name
     knn = KNeighborsRegressor(n_jobs=-1)
-    gs = GridSearchCV(knn, scoring=scoring, param_grid=param_grid, cv=10, refit='MSE', return_train_score=False)
+    gs = GridSearchCV(knn, scoring=scoring, param_grid=param_grid, cv=5, refit='MSE', return_train_score=False)
     gs.fit(df_train, target)
     results_ = gs.cv_results_
     all_gs[scaling_name] = gs
