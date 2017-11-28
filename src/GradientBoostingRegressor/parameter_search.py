@@ -13,7 +13,7 @@ from matplotlib import pyplot as plt
 
 start = time.time()
 
-dfTrain = pd.read_csv('../../data/TRAIN_TEST_corrected3/train_corrected3.csv').sample(frac=0.01)
+dfTrain = pd.read_csv('../../data/TRAIN_TEST_corrected3/train_corrected3.csv')
 
 train = dfTrain.drop(['price_usd', 'id'], axis=1)
 target = dfTrain.price_usd
@@ -24,7 +24,7 @@ target = dfTrain.price_usd
 
 # PARAMETROS PARA LinearSVR
 param_grid = [
-                { 'n_estimators' : [40, 80, 160, 320],
+                { 'n_estimators' : [40, 80, 160, 320, 480, 650],
                   'max_depth' : [3],
                   'min_samples_split' : [2],
                   'learning_rate' : [0.01],
@@ -45,13 +45,13 @@ dfResults = pd.DataFrame(results).loc[:, ('rank_test_MSE', 'mean_test_MSE',
                                           'param_n_estimators')].infer_objects()
 
 ax = dfResults.plot(x='param_n_estimators', y='mean_test_MSE',
-             figsize=(12, 12), color='darkgreen', lw=4, legend=False)
+             figsize=(12, 12), color='lightblue', lw=4, legend=False)
 
 ax.grid()
-ax.set_title("Grid Search Gradient Boosting Regressor: finding best estimators value", fontsize=18)
+ax.set_title("Grid Search Gradient Boosting Regressor: finding best estimators value\n", fontsize=18)
 ax.set_xlabel('Number of estimators', fontsize=14)
 ax.set_ylabel('NegMSE\n(higher is better)', fontsize=14)
-step = 20
+step = 40
 estimators = param_grid[0]['n_estimators']
 ax.set_xticks(range(int(min(estimators)), int(max(estimators)), step));
 # ax.legend(fontsize=11)
