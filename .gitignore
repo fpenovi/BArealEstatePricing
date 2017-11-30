@@ -19,3 +19,6 @@ Visualizations/
 
 # API keys
 *.key
+
+# Directory dummy
+*.directory
