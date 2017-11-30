@@ -14,8 +14,6 @@ ___
 + [Informe TP2](https://docs.google.com/document/d/19Rs8SzdZ3O7Q2dRUgmIxvfE0gCrDb9f-HIBK_Js5rQc/edit?usp=sharing "Machine Learning")
 ___
 
-+ [Team Kaggle](https://www.falta-agregar.com "Team A definir")
-
 ### Integrantes:
 ###### Penovi, Francisco
 
@@ -30,3 +28,4 @@ ___
 > + Seaborn
 > + googlemaps
 > + geopy
+> + haversine
